@@ -41,38 +41,12 @@ from System.Collections.Generic import List
 import pyrevit
 from pyrevit.forms import ProgressBar
 
+from Snippets._functions import get_all_solids, flatten
+
 uiapp = __revit__
 doc = __revit__.ActiveUIDocument.Document
 uidoc = __revit__.ActiveUIDocument
 app = __revit__.Application
-
-def get_all_solids(element, g_options, solids=None):
-    '''retrieve all solids from elements'''
-    if solids is None:
-        solids = []
-    if hasattr(element, "Geometry"):
-        for item in element.Geometry[g_options]:
-            get_all_solids(item, g_options, solids)
-    elif isinstance(element, DB.GeometryInstance):
-        for item in element.GetInstanceGeometry():
-            get_all_solids(item, g_options, solids)
-    elif isinstance(element, DB.Solid):
-        solids.append(element)
-    elif isinstance(element, DB.FamilyInstance):
-        for item in element.GetSubComponentIds():
-            family_instance = element.Document.GetElement(item)
-            get_all_solids(family_instance, g_options, solids)
-    return solids
-
-def flatten(element, flat_list=None):
-    if flat_list is None:
-        flat_list = []
-    if hasattr(element, "__iter__"):
-        for item in element:
-            flatten(item, flat_list)
-    else:
-        flat_list.append(element)
-    return flat_list
 
 g_options = DB.Options()
 

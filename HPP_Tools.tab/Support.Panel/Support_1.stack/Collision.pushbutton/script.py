@@ -40,60 +40,12 @@ from System.Collections.Generic import List
 import pyrevit
 from pyrevit.forms import ProgressBar
 
-from Snippets._functions import flatten, to_list, create_parameter_binding, create_project_parameter, get_external_definition
+from Snippets._functions import flatten, to_list
 
 # uiapp = __revit__
 doc = __revit__.ActiveUIDocument.Document
 # uidoc = __revit__.ActiveUIDocument
 app = __revit__.Application
-
-# def flatten(element, flat_list=None):
-#     if flat_list is None:
-#         flat_list = []
-#     if hasattr(element, "__iter__"):
-#         for item in element:
-#             flatten(item, flat_list)
-#     else:
-#         flat_list.append(element)
-#     return flat_list
-
-# def to_list(element, list_type=None):
-#     if not hasattr(element, '__iter__') or isinstance(element, dict):
-#         element = [element]
-#     if list_type is not None:
-#         if isinstance(element, List[list_type]):
-#             return element
-#         if all(isinstance(item, list_type) for item in element):
-#             typed_list = List[list_type]()
-#             for item in element:
-#                 typed_list.Add(item)
-#             return typed_list
-#     return element
-
-# def create_parameter_binding(doc, categories, is_type_binding=False):
-#     app = doc.Application
-#     category_set = app.Create.NewCategorySet()
-#     for category in to_list(categories):
-#         if isinstance(category, DB.BuiltInCategory):
-#             category = DB.Category.GetCategory(doc, category)
-#         category_set.Insert(category)
-#     if is_type_binding:
-#         return app.Create.NewTypeBinding(category_set)
-#     return app.Create.NewInstanceBinding(category_set)
-
-# def create_project_parameter(doc, external_definition, binding, p_group = DB.BuiltInParameterGroup.INVALID):
-#     if doc.ParameterBindings.Insert(external_definition, binding, p_group):
-#         iterator = doc.ParameterBindings.ForwardIterator()
-#         while iterator.MoveNext():
-#             internal_definition = iterator.Key
-#             parameter_element = doc.GetElement(internal_definition.Id)
-#             if isinstance(parameter_element, DB.SharedParameterElement) and parameter_element.GuidValue == external_definition.GUID:
-#                 return internal_definition
-
-# def get_external_definition(app, group_name, definition_name):
-#     return app.OpenSharedParameterFile() \
-#         .Groups[group_name] \
-#         .Definitions[definition_name]
 
 # categories filter list
 categories_to_check = List[DB.BuiltInCategory]()
@@ -133,6 +85,7 @@ clashed_elements = []
 
 if param_element_id == None:
     print("Please apply parameter 'H_TÜ_Kollisionskörper einschalten' to the families.")
+
 else:
 
     # rule, that checks if family has parameter 'H_TÜ_Kollisionskörper einschalten'
@@ -222,7 +175,6 @@ else:
 if cancelled:
     print('Operation is cancelled!')
 else:
-
     # schedule creation
     if len(clashed_elements) > 0:
         try:
@@ -269,5 +221,5 @@ else:
             print('Check the schedule named "Collision Check"!')
         except:
             Exception
-    else:
+    elif param_element_id != None:
         print('No clashed doors or windows were detected on active view!')

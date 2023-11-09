@@ -39,6 +39,8 @@ from System.Collections.Generic import List
 import pyrevit
 from pyrevit.forms import ProgressBar
 
+from Snippets._functions import to_list, unit_conventer, flatten, to_proto_type
+
 # doc = DocumentManager.Instance.CurrentDBDocument
 # uiapp = DocumentManager.Instance.CurrentUIApplication
 # app = uiapp.Application
@@ -48,55 +50,6 @@ from pyrevit.forms import ProgressBar
 doc = __revit__.ActiveUIDocument.Document
 uidoc = __revit__.ActiveUIDocument
 app = __revit__.Application
-
-def to_list(element, list_type=None):
-    if not hasattr(element, '__iter__') or isinstance(element, dict):
-        element = [element]
-    if list_type is not None:
-        if isinstance(element, List[list_type]):
-            return element
-        if all(isinstance(item, list_type) for item in element):
-            typed_list = List[list_type]()
-            for item in element:
-                typed_list.Add(item)
-            return typed_list
-    return element
-
-def unit_conventer(
-        doc,
-        value,
-        to_internal=False,
-        unit_type=DB.SpecTypeId.Length,
-        number_of_digits=None):
-    display_units = doc.GetUnits().GetFormatOptions(unit_type).GetUnitTypeId()
-    method = DB.UnitUtils.ConvertToInternalUnits if to_internal \
-        else DB.UnitUtils.ConvertFromInternalUnits
-    if number_of_digits is None:
-        return method(value, display_units)
-    elif number_of_digits > 0:
-        return round(method(value, display_units), number_of_digits)
-    return int(round(method(value, display_units), number_of_digits))
-
-def flatten(element, flat_list=None):
-    if flat_list is None:
-        flat_list = []
-    if hasattr(element, "__iter__"):
-        for item in element:
-            flatten(item, flat_list)
-    else:
-        flat_list.append(element)
-    return flat_list
-
-def to_proto_type(elements, of_type=None):
-    elements = flatten(elements) if of_type is None \
-        else [item for item in flatten(elements) if isinstance(item, of_type)]
-    proto_geometry = []
-    for element in elements:
-        if hasattr(element, 'ToPoint') and element.ToPoint():
-            proto_geometry.append(element.ToPoint())
-        elif hasattr(element, 'ToProtoType') and element.ToProtoType():
-            proto_geometry.append(element.ToProtoType())
-    return proto_geometry
 
 doors = [door for door in FEC(doc).OfCategory(
     DB.BuiltInCategory.OST_Doors).WhereElementIsNotElementType().ToElements() if door.Parameter[

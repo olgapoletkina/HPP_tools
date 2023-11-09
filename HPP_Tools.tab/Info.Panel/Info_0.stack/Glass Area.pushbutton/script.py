@@ -38,51 +38,10 @@ clr.AddReference('RevitAPI')
 from Autodesk.Revit import DB
 from Autodesk.Revit.DB import FilteredElementCollector as FEC
 
+from Snippets._functions import get_all_solids, flatten, unit_conventer
+
 doc = __revit__.ActiveUIDocument.Document
 uidoc = __revit__.ActiveUIDocument
-
-def get_all_solids(element, g_options, solids=None):
-    '''retrieve all solids from elements'''
-    if solids is None:
-        solids = []
-    if hasattr(element, "Geometry"):
-        for item in element.Geometry[g_options]:
-            get_all_solids(item, g_options, solids)
-    elif isinstance(element, DB.GeometryInstance):
-        for item in element.GetInstanceGeometry():
-            get_all_solids(item, g_options, solids)
-    elif isinstance(element, DB.Solid):
-        solids.append(element)
-    elif isinstance(element, DB.FamilyInstance):
-        for item in element.GetSubComponentIds():
-            family_instance = element.Document.GetElement(item)
-            get_all_solids(family_instance, g_options, solids)
-    return solids
-
-def flatten(element, flat_list=None):
-    if flat_list is None:
-        flat_list = []
-    if hasattr(element, "__iter__"):
-        for item in element:
-            flatten(item, flat_list)
-    else:
-        flat_list.append(element)
-    return flat_list
-
-def unit_conventer(
-        doc,
-        value,
-        to_internal=False,
-        unit_type=DB.SpecTypeId.Length,
-        number_of_digits=None):
-    display_units = doc.GetUnits().GetFormatOptions(unit_type).GetUnitTypeId()
-    method = DB.UnitUtils.ConvertToInternalUnits if to_internal \
-        else DB.UnitUtils.ConvertFromInternalUnits
-    if number_of_digits is None:
-        return method(value, display_units)
-    elif number_of_digits > 0:
-        return round(method(value, display_units), number_of_digits)
-    return int(round(method(value, display_units), number_of_digits))
 
 g_options = DB.Options()
 

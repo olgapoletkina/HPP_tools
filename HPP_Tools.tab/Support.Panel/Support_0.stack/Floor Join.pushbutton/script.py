@@ -40,33 +40,12 @@ from System.Collections.Generic import List
 import pyrevit
 from pyrevit.forms import ProgressBar
 
+from Snippets._functions import flatten, to_list
+
 # uiapp = __revit__
 doc = __revit__.ActiveUIDocument.Document
 # uidoc = __revit__.ActiveUIDocument
 app = __revit__.Application
-
-def to_list(element, list_type=None):
-    if not hasattr(element, '__iter__') or isinstance(element, dict):
-        element = [element]
-    if list_type is not None:
-        if isinstance(element, List[list_type]):
-            return element
-        if all(isinstance(item, list_type) for item in element):
-            typed_list = List[list_type]()
-            for item in element:
-                typed_list.Add(item)
-            return typed_list
-    return element
-
-def flatten(element, flat_list=None):
-    if flat_list is None:
-        flat_list = []
-    if hasattr(element, "__iter__"):
-        for item in element:
-            flatten(item, flat_list)
-    else:
-        flat_list.append(element)
-    return flat_list
 
 categories_filter = List[DB.BuiltInCategory]()
 

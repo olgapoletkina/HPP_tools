@@ -38,23 +38,10 @@ from Autodesk.Revit.DB import Architecture as AR
 from Autodesk.Revit.UI import Selection as SEL
 from System import *
 
+from Snippets._functions import unit_conventer
+
 doc = __revit__.ActiveUIDocument.Document
 uidoc = __revit__.ActiveUIDocument
-
-def unit_conventer(
-        doc,
-        value,
-        to_internal=False,
-        unit_type=DB.SpecTypeId.Length,
-        number_of_digits=None):
-    display_units = doc.GetUnits().GetFormatOptions(unit_type).GetUnitTypeId()
-    method = DB.UnitUtils.ConvertToInternalUnits if to_internal \
-        else DB.UnitUtils.ConvertFromInternalUnits
-    if number_of_digits is None:
-        return method(value, display_units)
-    elif number_of_digits > 0:
-        return round(method(value, display_units), number_of_digits)
-    return int(round(method(value, display_units), number_of_digits))
 
 windows = [window for window in FEC(doc).OfCategory(
     DB.BuiltInCategory.OST_Windows).WhereElementIsNotElementType() if window.Parameter[

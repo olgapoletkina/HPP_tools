@@ -37,21 +37,6 @@ doc = __revit__.ActiveUIDocument.Document
 # uidoc = __revit__.ActiveUIDocument
 app = __revit__.Application
 
-def unit_conventer(
-        doc,
-        value,
-        to_internal=False,
-        unit_type=DB.SpecTypeId.Length,
-        number_of_digits=None):
-    display_units = doc.GetUnits().GetFormatOptions(unit_type).GetUnitTypeId()
-    method = DB.UnitUtils.ConvertToInternalUnits if to_internal \
-        else DB.UnitUtils.ConvertFromInternalUnits
-    if number_of_digits is None:
-        return method(value, display_units)
-    elif number_of_digits > 0:
-        return round(method(value, display_units), number_of_digits)
-    return int(round(method(value, display_units), number_of_digits))
-
 doors = [door for door in FEC(doc).OfCategory(
     DB.BuiltInCategory.OST_Doors).WhereElementIsNotElementType().ToElements() if door.Parameter[
     DB.BuiltInParameter.PHASE_DEMOLISHED].AsDouble() == 0]

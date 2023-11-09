@@ -42,44 +42,12 @@ from System import *
 import pyrevit
 from pyrevit.forms import ProgressBar
 
+from Snippets._functions import unit_conventer, get_room_boundary
+
 # uiapp = __revit__
 doc = __revit__.ActiveUIDocument.Document
 # uidoc = __revit__.ActiveUIDocument
 app = __revit__.Application
-
-def unit_conventer(
-        doc,
-        value,
-        to_internal=False,
-        unit_type=DB.SpecTypeId.Length,
-        number_of_digits=None):
-    display_units = doc.GetUnits().GetFormatOptions(unit_type).GetUnitTypeId()
-    method = DB.UnitUtils.ConvertToInternalUnits if to_internal \
-        else DB.UnitUtils.ConvertFromInternalUnits
-    if number_of_digits is None:
-        return method(value, display_units)
-    elif number_of_digits > 0:
-        return round(method(value, display_units), number_of_digits)
-    return int(round(method(value, display_units), number_of_digits))
-
-def get_room_boundary(doc, item, options):
-    e_list = []
-    c_list = []
-    try:
-        for i in item.GetBoundarySegments(options):
-            for j in i:
-                e_list.append(doc.GetElement(j.ElementId))
-                c_list.append(j.Curve.ToProtoType())
-    except:
-        calculator = DB.SpatialElementGeometryCalculator(doc)
-        try:
-            results = calculator.CalculateSpatialElementGeometry(item)
-            for face in results.GetGeometry().Faces:
-                for b_face in results.GetBoundaryFaceInfo(face):
-                    e_list.append(doc.GetElement(b_face.SpatialBoundaryElement.HostElementId))
-        except:
-            pass
-    return [e_list, c_list]
 
 # excluding staircases from the room list
 rooms = []
