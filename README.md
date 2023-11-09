@@ -10,10 +10,11 @@ A customer set of Revit tools developed for HPP Architects
 
 3. Go to the **PyRevit tab**, click the **PyRevit button** in the lower-left corner, and select **"Settings."** On the **"Custom Extension Directories"** tab, click **"Add folder"** and select the folder that contains the **HPP_tools extension**. Press **"Save Settings and Reload."**
 
-![Alt text](visual.png)
+![Alt text](instructions.png)
 
 4. You should now be able to see HPP_Tools loaded in your Tab menu.
 
 Developed by Olga Poletkina 
-olga.poletkina@hpp.com
-olga.poletkina@gmail.com
+
+- olga.poletkina@hpp.com
+- olga.poletkina@gmail.com
