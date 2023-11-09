@@ -4,11 +4,11 @@ A customer set of Revit tools developed for HPP Architects
 
 **Installation**
 
-1. **Install PyRevit** (https://github.com/eirannejad/pyRevit/releases). If needed, ask the BIM department for assistance.
+1. **Install PyRevit** (https://github.com/eirannejad/pyRevit/releases). If needed, ask BIM department for assistance.
 
 2. Clone this repository if you have a GitHub account. Alternatively, **download** the folder to your computer.
 
-3. Go to the **PyRevit tab**, click the **PyRevit button** in the lower-left corner, and select **"Settings."** On the **"Custom Extension Directories"** tab, click **"Add folder"** and select the folder that contains the **HPP_tools extension**. Press **"Save Settings and Reload."**
+3. Go to the **PyRevit tab**, click **PyRevit button** in the lower-left corner, and select **"Settings."** On the **"Custom Extension Directories"** tab, click **"Add folder"** and select folder that contains the **HPP_tools extension**. Press **"Save Settings and Reload."**
 
 ![Alt text](instructions.png)
 
