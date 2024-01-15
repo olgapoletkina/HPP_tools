@@ -42,7 +42,7 @@ from System import *
 import pyrevit
 from pyrevit.forms import ProgressBar
 
-from Snippets._functions import unit_conventer, get_room_boundary
+from Snippets._functions import unit_converter, get_room_boundary
 
 # uiapp = __revit__
 doc = __revit__.ActiveUIDocument.Document

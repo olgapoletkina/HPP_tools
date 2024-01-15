@@ -30,7 +30,7 @@ from Autodesk.Revit import DB
 from Autodesk.Revit.DB import FilteredElementCollector as FEC
 from System.Collections.Generic import List
 
-from Snippets._functions import unit_conventer
+from Snippets._functions import unit_converter
 
 # uiapp = __revit__
 doc = __revit__.ActiveUIDocument.Document
@@ -50,8 +50,8 @@ with DB.Transaction(doc, 'Wall thickness parameter application') as t:
             print('Please apply "H_TÜ_ZA_Maulweite" parameter!')
             break
         elif thickness_parameter != None:
-            thickness_parameter.Set(str(unit_conventer(doc, door.Host.Width)))
-            width.append(unit_conventer(doc, door.Host.Width))
+            thickness_parameter.Set(str(unit_converter(doc, door.Host.Width)))
+            width.append(unit_converter(doc, door.Host.Width))
     t.Commit()
 
 print("""The 'H_TÜ_ZA_Maulweite' parameter is applied.""")

@@ -120,67 +120,71 @@ or_filter = DB.LogicalOrFilter(
 elements = FEC(doc, doc.ActiveView.Id).WherePasses(multi_category_filter).WhereElementIsNotElementType().ToElements()
 floors = FEC(doc, doc.ActiveView.Id).WherePasses(and_rule_floors).WhereElementIsNotElementType().ToElements()
 
-cancelled = False
-intersected = []
+if len(floors) == 0:
+    print('No finishing floors following the HPP naming convention are loaded into the project')
+else:
 
-# get intersected elements and initiate progress bar
-with ProgressBar(cancellable=True) as pb:
-    elements_from_filter = []
-    intersected_list = []
-    for floor, counter in zip(floors, range(len(floors))):
-        intersect_filter = DB.ElementIntersectsElementFilter(floor)
-        elements_from_filter = FEC(doc, doc.ActiveView.Id).WherePasses(multi_category_filter).WherePasses(intersect_filter)
-        intersected_list.append(elements_from_filter)
-        intersected_Ids = []
-        for el in flatten(intersected_list):
-            intersected_Ids.append(doc.GetElement(el.Id))
-        if intersected_Ids:
-            intersected.append([floor, intersected_Ids])
-        if pb.cancelled:
-            cancelled = True
-            break
-        else:
-            pb.update_progress(counter, len(elements))
+    cancelled = False
+    intersected = []
 
-if cancelled:
-    print('Operation is cancelled!')
+    # get intersected elements and initiate progress bar
+    with ProgressBar(cancellable=True) as pb:
+        elements_from_filter = []
+        intersected_list = []
+        for floor, counter in zip(floors, range(len(floors))):
+            intersect_filter = DB.ElementIntersectsElementFilter(floor)
+            elements_from_filter = FEC(doc, doc.ActiveView.Id).WherePasses(multi_category_filter).WherePasses(intersect_filter)
+            intersected_list.append(elements_from_filter)
+            intersected_Ids = []
+            for el in flatten(intersected_list):
+                intersected_Ids.append(doc.GetElement(el.Id))
+            if intersected_Ids:
+                intersected.append([floor, intersected_Ids])
+            if pb.cancelled:
+                cancelled = True
+                break
+            else:
+                pb.update_progress(counter, len(elements))
 
-# join elements
-with DB.Transaction(doc, 'Join elements') as t:
-    t.Start()
-    for element in intersected:
-        try:
-            for el in element[1]:
-                DB.JoinGeometryUtils.JoinGeometry(
-                    doc,
-                    element[0],
-                    el
-                )
-        except:
-            pass
-    t.Commit()
+    if cancelled:
+        print('Operation is cancelled!')
 
-# switch joining order
-with DB.Transaction(doc, 'Switch join order for finished floor') as t:
-    t.Start()
-    for element in intersected:
-        joined_elements = DB.JoinGeometryUtils.GetJoinedElements(doc, element[0])
-        for el_id in joined_elements:
-            el = doc.GetElement(el_id)
-            if DB.JoinGeometryUtils.IsCuttingElementInJoin(doc, element[0], el):
-                try:
-                    DB.JoinGeometryUtils.SwitchJoinOrder(
+    # join elements
+    with DB.Transaction(doc, 'Join elements') as t:
+        t.Start()
+        for element in intersected:
+            try:
+                for el in element[1]:
+                    DB.JoinGeometryUtils.JoinGeometry(
                         doc,
-                        el,
-                        element[0]
-                )
-                except:
-                    pass
-    t.Commit()
+                        element[0],
+                        el
+                    )
+            except:
+                pass
+        t.Commit()
 
-if not cancelled:
-    if len(intersected) > 0:
-        print('Elements were joined!')
-    else:
-        print('No intersections were detected!')
+    # switch joining order
+    with DB.Transaction(doc, 'Switch join order for finished floor') as t:
+        t.Start()
+        for element in intersected:
+            joined_elements = DB.JoinGeometryUtils.GetJoinedElements(doc, element[0])
+            for el_id in joined_elements:
+                el = doc.GetElement(el_id)
+                if DB.JoinGeometryUtils.IsCuttingElementInJoin(doc, element[0], el):
+                    try:
+                        DB.JoinGeometryUtils.SwitchJoinOrder(
+                            doc,
+                            el,
+                            element[0]
+                    )
+                    except:
+                        pass
+        t.Commit()
+
+    if not cancelled:
+        if len(intersected) > 0:
+            print('Elements were joined!')
+        else:
+            print('No intersections were detected!')
 

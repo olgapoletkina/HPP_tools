@@ -38,7 +38,7 @@ from Autodesk.Revit.DB import Architecture as AR
 from Autodesk.Revit.UI import Selection as SEL
 from System import *
 
-from Snippets._functions import unit_conventer
+from Snippets._functions import unit_converter
 
 doc = __revit__.ActiveUIDocument.Document
 uidoc = __revit__.ActiveUIDocument
@@ -57,17 +57,17 @@ with DB.Transaction(doc, 'Assign Room Number') as t:
             window.Parameter[DB.BuiltInParameter.WINDOW_WIDTH] != None:
             
             parameter = window.LookupParameter('H_FE_Fensternummer')
-            sill_height = round(unit_conventer(
+            sill_height = round(unit_converter(
                 doc,
                 window.Parameter[DB.BuiltInParameter.INSTANCE_SILL_HEIGHT_PARAM].AsDouble()
             ) * 100)
             if window.Symbol.get_Parameter(DB.BuiltInParameter.WINDOW_WIDTH).AsDouble() > 0:
-                width = round(unit_conventer(
+                width = round(unit_converter(
                     doc,
                     window.Symbol.Parameter[DB.BuiltInParameter.WINDOW_WIDTH].AsDouble()
                 ) * 100)
             else:
-                width = round(unit_conventer(
+                width = round(unit_converter(
                     doc,
                     window.Parameter[DB.BuiltInParameter.WINDOW_WIDTH].AsDouble()
                 ) * 100)

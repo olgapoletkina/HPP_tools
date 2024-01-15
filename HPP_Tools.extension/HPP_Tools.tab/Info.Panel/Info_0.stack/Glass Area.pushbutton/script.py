@@ -38,7 +38,7 @@ clr.AddReference('RevitAPI')
 from Autodesk.Revit import DB
 from Autodesk.Revit.DB import FilteredElementCollector as FEC
 
-from Snippets._functions import get_all_solids, flatten, unit_conventer
+from Snippets._functions import get_all_solids, flatten, unit_converter
 
 doc = __revit__.ActiveUIDocument.Document
 uidoc = __revit__.ActiveUIDocument
@@ -60,7 +60,7 @@ for panel in curtain_panels:
                 host_wall = panel.Host
                 if host_wall.WallType.Parameter[DB.BuiltInParameter.FUNCTION_PARAM].AsValueString() == 'Exterior':
                     if 'GLA' in material_name:
-                        glass_area = unit_conventer(doc, 
+                        glass_area = unit_converter(doc, 
                                                     panel.Parameter[DB.BuiltInParameter.HOST_AREA_COMPUTED].AsDouble(),
                                                     unit_type=DB.SpecTypeId.Area) 
                         panels_area += glass_area
@@ -91,7 +91,7 @@ for solid in solids:
     solids_areas.append(sorted(area_list)[-1])
 
 # converting to m2
-windows_area = (unit_conventer(
+windows_area = (unit_converter(
     doc, 
     sum(solids_areas),
     unit_type=DB.SpecTypeId.Area

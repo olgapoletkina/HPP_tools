@@ -44,8 +44,8 @@ from System.Collections.Generic import List
 import pyrevit
 from pyrevit.forms import ProgressBar
 
-from Snippets._functions import get_3d_view_type_id, merge_bounding_boxes, view_exists, \
-    get_parameter_value_v2, unit_conventer, check_intersection
+from Snippets._functions import get_3d_view_type_id, view_exists, \
+    get_parameter_value_v2, unit_converter, check_intersection, merge_bounding_boxes
 
 uiapp = __revit__
 doc = __revit__.ActiveUIDocument.Document
@@ -102,6 +102,9 @@ if view_family_type_id:
             view_3d = DB.View3D.CreateIsometric(doc, view_family_type_id)
             view_3d.Name = "Bounding Box View"
             view_3d.IsSectionBoxActive = False
+            levels_cat = doc.Settings.Categories.get_Item(DB.BuiltInCategory.OST_Levels)
+            # make the levels visible in the view
+            view_3d.SetCategoryHidden(levels_cat.Id, False)
             t.Commit()
     else:
         pass
@@ -127,7 +130,7 @@ with ProgressBar(cancellable=True) as pb:
             bbox = merge_bounding_boxes([level.get_BoundingBox(view_3d), \
                                         levels_sorted[index+1].get_BoundingBox(view_3d)])
         else:
-            distance = unit_conventer(doc, 5)
+            distance = unit_converter(doc, 5)
             bbox = level.get_BoundingBox(view_3d)
             bbox.Max = DB.XYZ(bbox.Max.X, bbox.Max.Y, bbox.Max.Z + distance)
         for element in elements_list:

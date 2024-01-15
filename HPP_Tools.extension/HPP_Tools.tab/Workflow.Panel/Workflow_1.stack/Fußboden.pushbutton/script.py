@@ -39,7 +39,7 @@ from System.Collections.Generic import List
 import pyrevit
 from pyrevit.forms import ProgressBar
 
-from Snippets._functions import to_list, unit_conventer, flatten, to_proto_type
+from Snippets._functions import to_list, unit_converter, flatten, to_proto_type
 
 # doc = DocumentManager.Instance.CurrentDBDocument
 # uiapp = DocumentManager.Instance.CurrentUIApplication
@@ -203,7 +203,7 @@ if not cancelled:
     else:
         print('Parameter Fußbodenaufbau is applied.')
 
-    if len(no_param)>0:
+    if len(no_param) > 0:
         print('{} door type(s) doesn`t contain a proper H_TÜ_Fußbodenaufbau parameter or placed incorrectly:'.format(len(no_param)))
         for id in no_param:
             print(doc.GetElement(id).Family.Name)
