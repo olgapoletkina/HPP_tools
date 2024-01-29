@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
-__title__ = "Door Number"
+__title__ = "Nr. format: RoomNr.T00"
 __author__ = "olga.poletkina@hpp.com"
 __doc__ = """
 Author: olga.poletkina@hpp.com
 Date: 18.07.2023
+___________________________________________________________
+!!! Please note the format for the number that this program 
+will generate: It will start with a room number, followed 
+by 'T', and then a sequential counting number if several 
+doors belong to one room !!!
 ___________________________________________________________
 Description:
 This script assigns room numbers to doors based on the 
@@ -183,7 +188,7 @@ room_list = [
     'Garage',
     'Freisitz',
     'Zufahrt',
-    # 'Treppenhaus',
+    'Treppenhaus',
     'Treppenraum',
     'Eingang',
     'Gang',
@@ -211,20 +216,26 @@ room_name_check = []
 temp_numbers = []
 doors_not_named = []
 
-with DB.Transaction(doc, 'Assign Room Number') as t:
+with DB.Transaction(doc, 'Assign Door Number') as t:
     t.Start()
     for door in doors:
         number_parameter = door.LookupParameter('H_TÜ_Türnummer')
         if door.ToRoom[door_phase] != None and door.FromRoom[door_phase] != None:
-            to_room = door.ToRoom[door_phase].Parameter[DB.BuiltInParameter.ROOM_NAME].AsString()
-            from_room = door.FromRoom[door_phase].Parameter[DB.BuiltInParameter.ROOM_NAME].AsString()
+
+            '''Room name should be applied to Revit prebuild parameter NAME !!!'''
+
+            # to_room = door.ToRoom[door_phase].Parameter[DB.BuiltInParameter.ROOM_NAME].AsString()
+            # from_room = door.FromRoom[door_phase].Parameter[DB.BuiltInParameter.ROOM_NAME].AsString()
+            to_room = door.ToRoom[door_phase].LookupParameter('H_RA_Raumname').AsString()
+            from_room = door.FromRoom[door_phase].LookupParameter('H_RA_Raumname').AsString()
+
             for name in room_list:
                 if name in to_room or name in from_room:
                     if name in to_room:
-                        door_number_room = door.ToRoom[door_phase].LookupParameter('H_RA_Raumnummer').AsString()[1:]
+                        door_number_room = door.ToRoom[door_phase].LookupParameter('H_RA_Raumnummer').AsString()
                     else:
-                        door_number_room = door.FromRoom[door_phase].LookupParameter('H_RA_Raumnummer').AsString()[1:]
-                    number_parameter.Set('T' + door_number_room)
+                        door_number_room = door.FromRoom[door_phase].LookupParameter('H_RA_Raumnummer').AsString()
+                    number_parameter.Set(door_number_room + '.T')
                     continue
                 else:
                     pass
@@ -232,8 +243,8 @@ with DB.Transaction(doc, 'Assign Room Number') as t:
             from_room = door.FromRoom[door_phase].Parameter[DB.BuiltInParameter.ROOM_NAME].AsString()
             for name in room_list:
                 if name in from_room:
-                    door_number_room = door.FromRoom[door_phase].LookupParameter('H_RA_Raumnummer').AsString()[1:]
-                    number_parameter.Set('T' + door_number_room)
+                    door_number_room = door.FromRoom[door_phase].LookupParameter('H_RA_Raumnummer').AsString()
+                    number_parameter.Set(door_number_room + '.T')
                     continue
                 else:
                     pass
@@ -241,8 +252,8 @@ with DB.Transaction(doc, 'Assign Room Number') as t:
             to_room = door.ToRoom[door_phase].Parameter[DB.BuiltInParameter.ROOM_NAME].AsString()
             for name in room_list:
                 if name in to_room:
-                    door_number_room = door.ToRoom[door_phase].LookupParameter('H_RA_Raumnummer').AsString()[1:]
-                    number_parameter.Set('T' + door_number_room)
+                    door_number_room = door.ToRoom[door_phase].LookupParameter('H_RA_Raumnummer').AsString()
+                    number_parameter.Set(door_number_room + '.T')
                     continue
                 else:
                     pass
@@ -258,7 +269,7 @@ with DB.Transaction(doc, 'Assign Room Number') as t:
         if value != None:
             totalcount = repeated_door_names.count(value)
             count = repeated_door_names[:i].count(value)
-            door_number = value + '.' + str(count+1) if totalcount > 0 else value
+            door_number = value + '0' + str(count+1) if totalcount > 0 else value
             number_parameter = door.LookupParameter('H_TÜ_Türnummer')
             number_parameter.Set(door_number)
             door_name.append(door_number)

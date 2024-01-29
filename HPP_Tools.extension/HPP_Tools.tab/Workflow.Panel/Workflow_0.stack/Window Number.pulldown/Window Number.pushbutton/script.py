@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
-__title__ = "Window Number"
+__title__ = "Nr. format: F.Width.Sill Height.M"
 __author__ = "olga.poletkina@hpp.com"
 __doc__ = """
 Author: olga.poletkina@hpp.com
 Date: 18.07.2023
+___________________________________________________________
+!!! Please note the format for the number that this 
+program will generate: It will start with 'F', followed 
+by the width of the window, then the sill height, and end 
+with 'M' if the family is mirrored. All similar families 
+will receive similar numbers !!!
 ___________________________________________________________
 Description:
 This script assigns window numbers based on window 
@@ -49,7 +55,7 @@ windows = [window for window in FEC(doc).OfCategory(
 
 window_numbers = []
 
-with DB.Transaction(doc, 'Assign Room Number') as t:
+with DB.Transaction(doc, 'Assign Window Number') as t:
     t.Start()
     for window in windows:
         if window.Symbol.Parameter[DB.BuiltInParameter.WINDOW_WIDTH] != None and \
