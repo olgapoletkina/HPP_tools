@@ -222,12 +222,12 @@ with DB.Transaction(doc, 'Assign Door Number') as t:
         number_parameter = door.LookupParameter('H_TÜ_Türnummer')
         if door.ToRoom[door_phase] != None and door.FromRoom[door_phase] != None:
 
-            '''Room name should be applied to Revit prebuild parameter NAME !!!'''
+            '''For HPP users - Room name should be applied to Revit prebuild parameter NAME !!!'''
 
-            # to_room = door.ToRoom[door_phase].Parameter[DB.BuiltInParameter.ROOM_NAME].AsString()
-            # from_room = door.FromRoom[door_phase].Parameter[DB.BuiltInParameter.ROOM_NAME].AsString()
-            to_room = door.ToRoom[door_phase].LookupParameter('H_RA_Raumname').AsString()
-            from_room = door.FromRoom[door_phase].LookupParameter('H_RA_Raumname').AsString()
+            to_room = door.ToRoom[door_phase].Parameter[DB.BuiltInParameter.ROOM_NAME].AsString()
+            from_room = door.FromRoom[door_phase].Parameter[DB.BuiltInParameter.ROOM_NAME].AsString()
+            # to_room = door.ToRoom[door_phase].LookupParameter('H_RA_Raumname').AsString()
+            # from_room = door.FromRoom[door_phase].LookupParameter('H_RA_Raumname').AsString()
 
             for name in room_list:
                 if name in to_room or name in from_room:

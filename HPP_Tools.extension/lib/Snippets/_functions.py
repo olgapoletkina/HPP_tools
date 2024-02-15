@@ -518,3 +518,9 @@ class RoomAntiRutinaField(object):
         if not doors_to_include:
             return room_boundaries
         return self._add_door_outlines_via_solid_union(room_boundaries, doors_to_include, door_depth, door_depth_ratio)
+
+
+def create_direct_shape(doc, geometry_objects, category_id = DB.ElementId(DB.BuiltInCategory.OST_GenericModel)):
+    direct_shape = DB.DirectShape.CreateElement(doc, category_id)
+    direct_shape.SetShape(to_list(geometry_objects, DB.GeometryObject))
+    return direct_shape
